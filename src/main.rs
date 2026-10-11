@@ -77,6 +77,7 @@ fn cli(argv: &[String]) -> Result<String, String> {
         }
         Some("status") | None => Ok(format!("Google Chat\n  webhook: {}",
             if webhook().is_some() { "set" } else { "MISSING" })),
+        Some("-h" | "--help" | "help") => Ok("usage: gchat setup --webhook URL | status".into()),
         Some(o) => Err(format!("unknown verb {o}")),
     }
 }
