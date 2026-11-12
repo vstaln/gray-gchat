@@ -12,7 +12,7 @@ fn manifest() -> Value {
         "name": NAME, "display_name": "Google Chat",
         "version": env!("CARGO_PKG_VERSION"), "protocol": "1.1",
         "tools": [
-            {"name": "gchat_send",
+            {"name": "gchat_send", "label": "Google Chat", "preview": "{text|firstline}",
              "description": "Send text (Google Chat markdown: *bold* _italic_ `code`) to the configured space webhook.",
              "parameters": {"type": "object", "properties": {
                 "text": {"type": "string"},
