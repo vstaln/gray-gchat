@@ -20,6 +20,7 @@ fn manifest() -> Value {
              "required": ["text"]}},
         ],
         "commands": ["/gchat"], "subcommands": ["gchat"],
+        "command_descriptions": {"/gchat": "Google Chat bridge"},
     })
 }
 
