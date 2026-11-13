@@ -12,7 +12,7 @@ fn manifest() -> Value {
         "name": NAME, "display_name": "Google Chat",
         "version": env!("CARGO_PKG_VERSION"), "protocol": "1.1",
         "tools": [
-            {"name": "gchat_send",
+            {"name": "gchat_send", "label": "Google Chat", "preview": "{text|firstline}",
              "description": "Send text (Google Chat markdown: *bold* _italic_ `code`) to the configured space webhook.",
              "parameters": {"type": "object", "properties": {
                 "text": {"type": "string"},
@@ -20,6 +20,7 @@ fn manifest() -> Value {
              "required": ["text"]}},
         ],
         "commands": ["/gchat"], "subcommands": ["gchat"],
+        "command_descriptions": {"/gchat": "Google Chat bridge"},
     })
 }
 
@@ -104,9 +105,16 @@ fn sidecar() -> std::io::Result<()> {
                 let reply = if method == "plugin/manifest" {
                     json!({"id": id, "result": manifest()})
                 } else if method == "tool/call" {
-                    let r = match send(&v["params"]["args"]) {
-                        Ok(c) => json!({"id": id, "result": {"content": c}}),
-                        Err(e) => json!({"id": id, "result": {"content": e, "is_error": true}}),
+                    let name = v["params"]["name"].as_str().unwrap_or("");
+                    let r = match name {
+                        "gchat_send" => match send(&v["params"]["args"]) {
+                            Ok(c) => json!({"id": id, "result": {"content": c}}),
+                            Err(e) => json!({"id": id,
+                                "result": {"content": e, "is_error": true}}),
+                        },
+                        other => json!({"id": id, "result": {
+                            "content": format!("unknown tool {other}"),
+                            "is_error": true}}),
                     };
                     r
                 } else if method == "command/run" {
